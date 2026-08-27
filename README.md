@@ -33,3 +33,37 @@ Key highlights:
 ## Project Structure
 
 ### **`Try it on`** :https://time-series-delta.vercel.app/
+
+```text
+.
+├── src/                 # Root Vite/React frontend
+├── frontend/            # Secondary frontend workspace
+└── backend/             # Python API and forecasting services
+```
+
+## Local Setup
+
+### Root Frontend
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run lint
+```
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python run.py
+```
+
+`backend/requirements.txt` is currently minimal and should be updated as backend services add concrete runtime dependencies.
+
+## Data Expectations
+
+Time-series uploads should include a parseable date or timestamp column and a numeric value column. Use consistent frequency, document resampling decisions, and keep train/test splits chronological.
