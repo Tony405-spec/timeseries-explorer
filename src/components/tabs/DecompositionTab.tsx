@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart3 } from 'lucide-react';
 import DecompositionChart from '../charts/DecompositionChart';
 import { TimeSeriesData, SeasonalDecomposition } from '../../types';
@@ -16,7 +16,7 @@ const DecompositionTab: React.FC<DecompositionTabProps> = ({ datasets, activeDat
 
   const currentDataset = datasets.find(d => d.id === activeDataset);
 
-  const runDecomposition = async () => {
+  const runDecomposition = useCallback(() => {
     if (!currentDataset) return;
 
     setIsDecomposing(true);
@@ -28,13 +28,11 @@ const DecompositionTab: React.FC<DecompositionTabProps> = ({ datasets, activeDat
     } finally {
       setIsDecomposing(false);
     }
-  };
+  }, [currentDataset, seasonalPeriod]);
 
   useEffect(() => {
-    if (currentDataset) {
-      runDecomposition();
-    }
-  }, [currentDataset, seasonalPeriod]);
+    runDecomposition();
+  }, [runDecomposition]);
 
   if (!currentDataset) {
     return (

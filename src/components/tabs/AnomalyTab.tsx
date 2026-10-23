@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle, Search } from 'lucide-react';
 import TimeSeriesChart from '../charts/TimeSeriesChart';
 import { TimeSeriesData, AnomalyPoint } from '../../types';
@@ -17,7 +17,7 @@ const AnomalyTab: React.FC<AnomalyTabProps> = ({ datasets, activeDataset }) => {
 
   const currentDataset = datasets.find(d => d.id === activeDataset);
 
-  const runAnomalyDetection = async () => {
+  const runAnomalyDetection = useCallback(() => {
     if (!currentDataset) return;
 
     setIsDetecting(true);
@@ -29,13 +29,11 @@ const AnomalyTab: React.FC<AnomalyTabProps> = ({ datasets, activeDataset }) => {
     } finally {
       setIsDetecting(false);
     }
-  };
+  }, [currentDataset, detectionMethod, threshold]);
 
   useEffect(() => {
-    if (currentDataset) {
-      runAnomalyDetection();
-    }
-  }, [currentDataset, detectionMethod, threshold]);
+    runAnomalyDetection();
+  }, [runAnomalyDetection]);
 
   if (!currentDataset) {
     return (
