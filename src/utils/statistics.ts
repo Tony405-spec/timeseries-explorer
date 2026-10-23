@@ -66,6 +66,10 @@ export const detectAnomalies = (data: TimeSeriesPoint[], method: string = 'zscor
 };
 
 export const performSeasonalDecomposition = (data: TimeSeriesPoint[], period: number = 30): SeasonalDecomposition => {
+  if (!Number.isInteger(period) || period < 1) {
+    throw new Error('Seasonal period must be a positive integer');
+  }
+
   const values = data.map(point => point.value);
   const n = values.length;
   
