@@ -1,5 +1,11 @@
 import { TimeSeriesPoint, Statistics, ForecastResult, AnomalyPoint, SeasonalDecomposition } from '../types';
 
+const validateForecastData = (data: TimeSeriesPoint[], minimumObservations: number): void => {
+  if (data.length < minimumObservations) {
+    throw new Error(`At least ${minimumObservations} observations are required for this forecasting method`);
+  }
+};
+
 const validateForecastHorizon = (horizon: number): void => {
   if (!Number.isInteger(horizon) || horizon < 1) {
     throw new Error('Forecast horizon must be a positive integer');
@@ -147,6 +153,7 @@ export const performSeasonalDecomposition = (data: TimeSeriesPoint[], period: nu
 
 export const linearRegression = (data: TimeSeriesPoint[], horizon: number): ForecastResult => {
   validateForecastHorizon(horizon);
+  validateForecastData(data, 2);
   const n = data.length;
   const x = data.map((_, i) => i);
   const y = data.map(point => point.value);
@@ -189,6 +196,7 @@ export const linearRegression = (data: TimeSeriesPoint[], horizon: number): Fore
 
 export const exponentialSmoothing = (data: TimeSeriesPoint[], horizon: number, alpha: number = 0.3): ForecastResult => {
   validateForecastHorizon(horizon);
+  validateForecastData(data, 1);
   const values = data.map(point => point.value);
   let forecast = values[0];
   const smoothed = [forecast];
@@ -236,6 +244,7 @@ const createSeededRandom = (seed: number): (() => number) => {
 
 export const arimaSimulation = (data: TimeSeriesPoint[], horizon: number, seed: number = 42): ForecastResult => {
   validateForecastHorizon(horizon);
+  validateForecastData(data, 2);
   // Simplified ARIMA simulation (in reality, this would be much more complex)
   const values = data.map(point => point.value);
   const n = values.length;
