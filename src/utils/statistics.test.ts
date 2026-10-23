@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  arimaSimulation,
   calculateStatistics,
   detectAnomalies,
   exponentialSmoothing,
@@ -81,4 +82,17 @@ describe('calculateStatistics', () => {
       'At least two data points are required to calculate statistics',
     );
   });
+});
+
+describe('forecast horizon validation', () => {
+  it.each([linearRegression, exponentialSmoothing, arimaSimulation])(
+    'rejects invalid horizons in %s',
+    (forecast) => {
+      for (const horizon of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+        expect(() => forecast(points([2, 4]), horizon)).toThrow(
+          'Forecast horizon must be a positive integer',
+        );
+      }
+    },
+  );
 });
