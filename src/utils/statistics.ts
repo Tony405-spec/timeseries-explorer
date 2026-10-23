@@ -1,5 +1,15 @@
 import { TimeSeriesPoint, Statistics, ForecastResult, AnomalyPoint, SeasonalDecomposition } from '../types';
 
+const calculateMape = (actual: number[], predicted: number[]): number => {
+  if (actual.some(value => value === 0)) {
+    throw new Error('MAPE is undefined when actual values contain zero');
+  }
+  return actual.reduce(
+    (sum, value, index) => sum + Math.abs((value - predicted[index]) / value),
+    0
+  ) / actual.length * 100;
+};
+
 export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
   const values = data.map(point => point.value);
   const n = values.length;
@@ -149,7 +159,7 @@ export const linearRegression = (data: TimeSeriesPoint[], horizon: number): Fore
   const predictions = x.map(xi => slope * xi + intercept);
   const mae = y.reduce((sum, actual, i) => sum + Math.abs(actual - predictions[i]), 0) / n;
   const rmse = Math.sqrt(y.reduce((sum, actual, i) => sum + Math.pow(actual - predictions[i], 2), 0) / n);
-  const mape = y.reduce((sum, actual, i) => sum + Math.abs((actual - predictions[i]) / actual), 0) / n * 100;
+  const mape = calculateMape(y, predictions);
   
   return {
     method: 'Linear Regression',
@@ -186,7 +196,7 @@ export const exponentialSmoothing = (data: TimeSeriesPoint[], horizon: number, a
   // Calculate metrics
   const mae = values.reduce((sum, actual, i) => sum + Math.abs(actual - smoothed[i]), 0) / values.length;
   const rmse = Math.sqrt(values.reduce((sum, actual, i) => sum + Math.pow(actual - smoothed[i], 2), 0) / values.length);
-  const mape = values.reduce((sum, actual, i) => sum + Math.abs((actual - smoothed[i]) / actual), 0) / values.length * 100;
+  const mape = calculateMape(values, smoothed);
   
   return {
     method: 'Exponential Smoothing',
