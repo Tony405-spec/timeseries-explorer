@@ -56,6 +56,10 @@ export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
 };
 
 export const detectAnomalies = (data: TimeSeriesPoint[], method: string = 'zscore', threshold: number = 2): AnomalyPoint[] => {
+  if (method !== 'zscore' && method !== 'iqr') {
+    throw new Error(`Unsupported anomaly detection method: ${method}`);
+  }
+
   const values = data.map(point => point.value);
   const anomalies: AnomalyPoint[] = [];
   
