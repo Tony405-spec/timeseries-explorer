@@ -7,6 +7,8 @@ interface DataImportProps {
   onDataImport: (data: TimeSeriesData) => void;
 }
 
+type CsvRow = Record<string, string | undefined>;
+
 const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
   const [isDragging, setIsDragging] = React.useState(false);
   const [importStatus, setImportStatus] = React.useState<{
@@ -28,7 +30,7 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
           } else {
             setImportStatus({ status: 'error', message: 'Invalid JSON format. Expected: {id, name, data: [{timestamp, value}]}' });
           }
-        } catch (error) {
+        } catch {
           setImportStatus({ status: 'error', message: 'Failed to parse JSON file.' });
         }
       };
@@ -78,7 +80,7 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
            });
   };
 
-  const processCsvData = (csvData: any[], filename: string): TimeSeriesData => {
+  const processCsvData = (csvData: CsvRow[], filename: string): TimeSeriesData => {
     const processedData: TimeSeriesPoint[] = [];
     
     // Get column headers and find date/value columns flexibly
@@ -105,7 +107,7 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
       return value !== '' && Number.isFinite(Number(value));
     }); // Find any numeric column
     
-    csvData.forEach((row, index) => {
+    csvData.forEach((row) => {
       const dateValue = dateColumn ? row[dateColumn] : null;
       const numericValue = valueColumn ? row[valueColumn] : null;
       
@@ -121,7 +123,7 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
             const timestamp = parsedDate.toISOString().split('T')[0];
             processedData.push({ timestamp, value });
           }
-        } catch (error) {
+        } catch {
           // Skip invalid rows
         }
       }

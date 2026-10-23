@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Search } from 'lucide-react';
 import TimeSeriesChart from '../charts/TimeSeriesChart';
-import { TimeSeriesData, AnomalyPoint, ModelParameters } from '../../types';
+import { TimeSeriesData, AnomalyPoint } from '../../types';
 import { detectAnomalies } from '../../utils/statistics';
 
 interface AnomalyTabProps {
