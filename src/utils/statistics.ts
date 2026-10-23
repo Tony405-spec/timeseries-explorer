@@ -75,7 +75,9 @@ export const detectAnomalies = (data: TimeSeriesPoint[], method: string = 'zscor
     data.forEach(point => {
       if (point.value < lowerBound || point.value > upperBound) {
         const violatedBound = point.value < lowerBound ? lowerBound : upperBound;
-        const score = Math.abs(point.value - violatedBound) / iqr;
+        // With zero spread, the normalized score is undefined; report raw distance.
+        const distance = Math.abs(point.value - violatedBound);
+        const score = iqr === 0 ? distance : distance / iqr;
         anomalies.push({
           timestamp: point.timestamp,
           value: point.value,

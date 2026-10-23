@@ -30,6 +30,14 @@ describe('detectAnomalies', () => {
     expect(detectAnomalies(data, 'iqr', 5)).toEqual([]);
     expect(detectAnomalies(data, 'iqr', 1)).toHaveLength(2);
   });
+
+  it('returns finite scores when the IQR is zero', () => {
+    const anomalies = detectAnomalies(points([1, 1, 1, 1, 100]), 'iqr');
+
+    expect(anomalies).toHaveLength(1);
+    expect(anomalies[0].score).toBe(99);
+    expect(Number.isFinite(anomalies[0].score)).toBe(true);
+  });
 });
 
 describe('performSeasonalDecomposition', () => {
