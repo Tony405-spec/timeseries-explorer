@@ -54,15 +54,28 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
     }
   }, [onDataImport]);
 
-  const validateJsonData = (data: any): data is TimeSeriesData => {
-    return data &&
-           typeof data.id === 'string' &&
-           typeof data.name === 'string' &&
-           Array.isArray(data.data) &&
-           data.data.every((point: any) =>
-             typeof point.timestamp === 'string' &&
-             typeof point.value === 'number'
-           );
+  const validateJsonData = (data: unknown): data is TimeSeriesData => {
+    if (typeof data !== 'object' || data === null) {
+      return false;
+    }
+
+    const candidate = data as Record<string, unknown>;
+    return typeof candidate.id === 'string' &&
+           typeof candidate.name === 'string' &&
+           Array.isArray(candidate.data) &&
+           candidate.data.length > 0 &&
+           candidate.data.every((point: unknown) => {
+             if (typeof point !== 'object' || point === null) {
+               return false;
+             }
+
+             const observation = point as Record<string, unknown>;
+             return typeof observation.timestamp === 'string' &&
+                    observation.timestamp.trim() !== '' &&
+                    Number.isFinite(Date.parse(observation.timestamp)) &&
+                    typeof observation.value === 'number' &&
+                    Number.isFinite(observation.value);
+           });
   };
 
   const processCsvData = (csvData: any[], filename: string): TimeSeriesData => {
@@ -87,18 +100,25 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
       h.toLowerCase() === 'open' ||
       h.toLowerCase() === 'high' ||
       h.toLowerCase() === 'low'
-    ) || headers.find(h => !isNaN(parseFloat(csvData[0][h]))); // Find any numeric column
+    ) || headers.find(h => {
+      const value = String(csvData[0][h] ?? '').trim();
+      return value !== '' && Number.isFinite(Number(value));
+    }); // Find any numeric column
     
     csvData.forEach((row, index) => {
       const dateValue = dateColumn ? row[dateColumn] : null;
       const numericValue = valueColumn ? row[valueColumn] : null;
       
-      if (dateValue && numericValue) {
+      if (
+        dateValue != null && String(dateValue).trim() !== '' &&
+        numericValue != null && String(numericValue).trim() !== ''
+      ) {
         try {
-          const timestamp = new Date(dateValue).toISOString().split('T')[0];
-          const value = parseFloat(numericValue);
+          const parsedDate = new Date(dateValue);
+          const value = Number(numericValue);
         
-          if (!isNaN(value) && !isNaN(new Date(dateValue).getTime())) {
+          if (Number.isFinite(value) && Number.isFinite(parsedDate.getTime())) {
+            const timestamp = parsedDate.toISOString().split('T')[0];
             processedData.push({ timestamp, value });
           }
         } catch (error) {
