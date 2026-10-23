@@ -54,15 +54,28 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
     }
   }, [onDataImport]);
 
-  const validateJsonData = (data: any): data is TimeSeriesData => {
-    return data &&
-           typeof data.id === 'string' &&
-           typeof data.name === 'string' &&
-           Array.isArray(data.data) &&
-           data.data.every((point: any) =>
-             typeof point.timestamp === 'string' &&
-             typeof point.value === 'number'
-           );
+  const validateJsonData = (data: unknown): data is TimeSeriesData => {
+    if (typeof data !== 'object' || data === null) {
+      return false;
+    }
+
+    const candidate = data as Record<string, unknown>;
+    return typeof candidate.id === 'string' &&
+           typeof candidate.name === 'string' &&
+           Array.isArray(candidate.data) &&
+           candidate.data.length > 0 &&
+           candidate.data.every((point: unknown) => {
+             if (typeof point !== 'object' || point === null) {
+               return false;
+             }
+
+             const observation = point as Record<string, unknown>;
+             return typeof observation.timestamp === 'string' &&
+                    observation.timestamp.trim() !== '' &&
+                    Number.isFinite(Date.parse(observation.timestamp)) &&
+                    typeof observation.value === 'number' &&
+                    Number.isFinite(observation.value);
+           });
   };
 
   const processCsvData = (csvData: any[], filename: string): TimeSeriesData => {
