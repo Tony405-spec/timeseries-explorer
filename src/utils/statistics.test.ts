@@ -82,12 +82,15 @@ describe('calculateStatistics', () => {
     });
   });
 
-  it('rejects fewer than two observations', () => {
+  it('returns finite statistics for a single observation', () => {
+    expect(calculateStatistics(points([4]))).toEqual({
+      mean: 4, median: 4, std: 0, min: 4, max: 4, skewness: 0, kurtosis: 0,
+    });
+  });
+
+  it('rejects an empty series', () => {
     expect(() => calculateStatistics([])).toThrow(
-      'At least two data points are required to calculate statistics',
-    );
-    expect(() => calculateStatistics(points([4]))).toThrow(
-      'At least two data points are required to calculate statistics',
+      'At least one data point is required to calculate statistics',
     );
   });
 });
