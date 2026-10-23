@@ -15,12 +15,19 @@ const points = (values: number[]): TimeSeriesPoint[] => values.map((value, index
 
 describe('detectAnomalies', () => {
   it('scores low and high IQR anomalies from the violated bound', () => {
-    const anomalies = detectAnomalies(points([-11, 1, 2, 3, 4, 5, 6, 7, 8, 29]), 'iqr');
+    const anomalies = detectAnomalies(points([-11, 1, 2, 3, 4, 5, 6, 7, 8, 29]), 'iqr', 2);
 
     expect(anomalies.map(({ value, score }) => [value, score])).toEqual([
-      [-11, 1.1],
-      [29, 2.9],
+      [-11, 0.6],
+      [29, 2.4],
     ]);
+  });
+
+  it('applies the selected threshold to IQR bounds', () => {
+    const data = points([-11, 1, 2, 3, 4, 5, 6, 7, 8, 29]);
+
+    expect(detectAnomalies(data, 'iqr', 5)).toEqual([]);
+    expect(detectAnomalies(data, 'iqr', 1)).toHaveLength(2);
   });
 });
 
