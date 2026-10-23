@@ -103,6 +103,18 @@ describe('calculateStatistics', () => {
     });
   });
 
+  it('calculates bounds for large datasets without spreading all values into a call', () => {
+    const largeSeries = Array.from({ length: 200_000 }, (_, value) => ({
+      timestamp: '2024-01-01',
+      value,
+    }));
+
+    const statistics = calculateStatistics(largeSeries);
+
+    expect(statistics.min).toBe(0);
+    expect(statistics.max).toBe(199_999);
+  });
+
   it('rejects an empty series', () => {
     expect(() => calculateStatistics([])).toThrow(
       'At least one data point is required to calculate statistics',

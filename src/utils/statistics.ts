@@ -40,8 +40,8 @@ export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
     : values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (n - 1);
   const std = Math.sqrt(variance);
   
-  const min = Math.min(...values);
-  const max = Math.max(...values);
+  const min = sortedValues[0];
+  const max = sortedValues[n - 1];
   
   // Skewness and Kurtosis calculations
   // Skewness and kurtosis are conventionally reported as zero for a constant series.
