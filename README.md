@@ -1,71 +1,36 @@
-# **`Time-Series Analysis App`**
+# Time Series Analysis App
 
-**Interactive Python application for time-series forecasting, trend analysis, and seasonal decomposition using real-world datasets.**
+This repository contains a Vite and React dashboard for exploring time-series data in the browser. The current app generates sample datasets locally, accepts CSV or JSON uploads, and displays overview, forecasting, anomaly, and decomposition views.
 
----
+Try the deployed app: [Time Series Analysis](https://time-series-delta.vercel.app/).
 
-## Project Overview
+## Current behavior
 
-This project demonstrates an **end-to-end time-series analysis workflow**, including data preprocessing, visualization, model building, and forecasting. The app allows users to explore temporal data and generate predictions for informed decision-making.
+- Sample stock-price, sales, and temperature series are generated when the app starts; these are synthetic examples, not real observations.
+- CSV imports should include a date or timestamp column and a numeric value column. JSON imports use `{ "id", "name", "data": [{ "timestamp", "value" }] }`.
+- Forecasting runs in the browser. The ARIMA option is explicitly a simulation; it is not an ARIMA model implementation.
+- The `backend/` files are currently empty, so this repository does not provide a runnable Python API or server-side forecasting service.
 
-The root `package.json` contains the primary Vite/React application published at the demo link below.
+## Run the frontend
 
-Key highlights:
-
-- **Data Preprocessing:** Handles missing values, resampling, and normalization for temporal datasets.  
-- **Exploratory Analysis:** Visualizes trends, seasonality, and autocorrelation using **Matplotlib** and **Seaborn**.  
-- **Forecasting Models:** Implements ARIMA, SARIMA, and Prophet models to predict future values.  
-- **Model Evaluation:** Uses metrics such as RMSE, MAPE, and MAE to assess forecast accuracy.  
-- **Interactive Interface:** Users can upload datasets, select date ranges, and visualize predictions dynamically.  
-- **Insights & Reporting:** Generates actionable insights from historical trends and seasonal patterns.
-
----
-
-## Tools & Technologies
-
-- Python (Pandas, NumPy, Matplotlib, Seaborn)  
-- statsmodels (ARIMA, SARIMA)  
-- Prophet (Facebook Prophet for advanced forecasting)  
-- Jupyter Notebook for workflow documentation  
-- Streamlit / Dash / Flask for interactive app interface  
-- Git / GitHub for version control  
-
----
-
-## Project Structure
-
-### **`Try it on`** :https://time-series-delta.vercel.app/
-
-```text
-.
-├── src/                 # Root Vite/React frontend
-├── frontend/            # Secondary frontend workspace
-└── backend/             # Python API and forecasting services
-```
-
-## Local Setup
-
-### Root Frontend
+Use Node.js 20 and npm, then run these commands from the repository root:
 
 ```bash
-npm install
+npm ci
 npm run dev
+```
+
+The development server prints the local URL. To create a production build or run the configured linter:
+
+```bash
 npm run build
 npm run lint
 ```
 
-### Backend
+The package lockfile is checked in. There is currently no frontend test script or test suite. The GitHub Actions workflow is configured for Azure deployment on pushes to `main`; it is not a pull-request test workflow.
 
-```bash
-cd backend
-python -m venv .venv
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python run.py
-```
+## Project layout
 
-`backend/requirements.txt` is currently minimal and should be updated as backend services add concrete runtime dependencies.
-
-## Data Expectations
-
-Time-series uploads should include a parseable date or timestamp column and a numeric value column. Use consistent frequency, document resampling decisions, and keep train/test splits chronological.
+- `src/` — React dashboard, data import, charts, and browser-side analysis utilities.
+- `backend/` — empty scaffolding; no backend dependencies or runnable service are present yet.
+- `frontend/` — secondary frontend files; the root `package.json` is the configured app entry point.
