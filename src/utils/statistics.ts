@@ -56,6 +56,10 @@ export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
 };
 
 export const detectAnomalies = (data: TimeSeriesPoint[], method: string = 'zscore', threshold: number = 2): AnomalyPoint[] => {
+  if (!Number.isFinite(threshold) || threshold < 0) {
+    throw new Error('Anomaly threshold must be a finite non-negative number');
+  }
+
   if (method !== 'zscore' && method !== 'iqr') {
     throw new Error(`Unsupported anomaly detection method: ${method}`);
   }

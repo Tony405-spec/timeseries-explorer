@@ -30,6 +30,15 @@ describe('detectAnomalies', () => {
     );
   });
 
+  it.each([-1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'rejects invalid thresholds (%s)',
+    (threshold) => {
+      expect(() => detectAnomalies(points([1, 2, 100]), 'iqr', threshold)).toThrow(
+        'Anomaly threshold must be a finite non-negative number',
+      );
+    },
+  );
+
   it('applies the selected threshold to IQR bounds', () => {
     const data = points([-11, 1, 2, 3, 4, 5, 6, 7, 8, 29]);
 
