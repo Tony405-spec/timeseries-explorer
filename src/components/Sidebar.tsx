@@ -11,14 +11,43 @@ import {
   Activity
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { TimeSeriesData } from '../types';
+import { serializeTimeSeriesCsv } from '../utils/dataExport';
 
 interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  activeDataset?: TimeSeriesData;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, activeDataset }) => {
   const { theme, toggleTheme } = useTheme();
+
+  const handleExport = () => {
+    if (!activeDataset) return;
+
+    const blob = new Blob([serializeTimeSeriesCsv(activeDataset)], {
+      type: 'text/csv;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const filename = activeDataset.name
+      .trim()
+      .split('')
+      .map((character) => {
+        const isInvalid = '<>:"/\\|?*'.includes(character) || character.charCodeAt(0) < 32;
+        return isInvalid ? '_' : character;
+      })
+      .join('')
+      .replace(/[. ]+$/, '') || 'time-series';
+
+    link.href = url;
+    link.download = `${filename}.csv`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  };
 
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: Activity },
@@ -76,9 +105,14 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
           {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
         </button>
         
-        <button className="w-full flex items-center px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors mt-2">
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={!activeDataset}
+          className="w-full flex items-center px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-2"
+        >
           <Download className="h-5 w-5 mr-3" />
-          Export Results
+          Export Dataset
         </button>
       </div>
     </div>

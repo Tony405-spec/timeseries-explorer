@@ -21,6 +21,8 @@ function App() {
     setActiveDataset(sampleData[0]?.id || '');
   }, []);
 
+  const selectedDataset = datasets.find((dataset) => dataset.id === activeDataset);
+
   const handleDataImport = (newData: TimeSeriesData) => {
     setDatasets(prev => [...prev, newData]);
     setActiveDataset(newData.id);
@@ -80,7 +82,7 @@ function App() {
   return (
     <ThemeProvider>
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} activeDataset={selectedDataset} />
         
         <main className="flex-1 overflow-auto">
           <div className="p-6">
