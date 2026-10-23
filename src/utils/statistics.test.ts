@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  calculateStatistics,
   detectAnomalies,
   exponentialSmoothing,
   linearRegression,
@@ -55,5 +56,22 @@ describe('forecast MAPE', () => {
   it('returns finite MAPE for nonzero actuals', () => {
     expect(linearRegression(points([2, 4]), 1).metrics.mape).toBe(0);
     expect(Number.isFinite(exponentialSmoothing(points([2, 4]), 1).metrics.mape)).toBe(true);
+  });
+});
+
+describe('calculateStatistics', () => {
+  it('returns finite moments for a constant series', () => {
+    expect(calculateStatistics(points([4, 4, 4]))).toEqual({
+      mean: 4, median: 4, std: 0, min: 4, max: 4, skewness: 0, kurtosis: 0,
+    });
+  });
+
+  it('rejects fewer than two observations', () => {
+    expect(() => calculateStatistics([])).toThrow(
+      'At least two data points are required to calculate statistics',
+    );
+    expect(() => calculateStatistics(points([4]))).toThrow(
+      'At least two data points are required to calculate statistics',
+    );
   });
 });

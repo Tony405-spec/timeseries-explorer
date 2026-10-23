@@ -13,6 +13,9 @@ const calculateMape = (actual: number[], predicted: number[]): number => {
 export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
   const values = data.map(point => point.value);
   const n = values.length;
+  if (n < 2) {
+    throw new Error('At least two data points are required to calculate statistics');
+  }
   
   const mean = values.reduce((sum, val) => sum + val, 0) / n;
   const sortedValues = [...values].sort((a, b) => a - b);
@@ -27,8 +30,13 @@ export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
   const max = Math.max(...values);
   
   // Skewness and Kurtosis calculations
-  const skewness = values.reduce((sum, val) => sum + Math.pow((val - mean) / std, 3), 0) / n;
-  const kurtosis = values.reduce((sum, val) => sum + Math.pow((val - mean) / std, 4), 0) / n - 3;
+  // Skewness and kurtosis are conventionally reported as zero for a constant series.
+  const skewness = std === 0
+    ? 0
+    : values.reduce((sum, val) => sum + Math.pow((val - mean) / std, 3), 0) / n;
+  const kurtosis = std === 0
+    ? 0
+    : values.reduce((sum, val) => sum + Math.pow((val - mean) / std, 4), 0) / n - 3;
   
   return { mean, median, std, min, max, skewness, kurtosis };
 };
