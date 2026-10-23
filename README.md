@@ -27,7 +27,7 @@ npm run build
 npm run lint
 ```
 
-The package lockfile is checked in. There is currently no frontend test script or test suite. The GitHub Actions workflow is configured for Azure deployment on pushes to `main`; it is not a pull-request test workflow.
+The package lockfile is checked in. Vitest runs the frontend unit tests with `npm run test`. GitHub Actions runs lint, tests, and a production build on pull requests and pushes to `main`. The repository is not configured for Azure Functions deployment; its backend is empty scaffolding.
 
 ## Project layout
 
