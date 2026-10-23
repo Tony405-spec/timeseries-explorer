@@ -193,10 +193,20 @@ export const exponentialSmoothing = (data: TimeSeriesPoint[], horizon: number, a
   };
 };
 
-export const arimaSimulation = (data: TimeSeriesPoint[], horizon: number): ForecastResult => {
+const createSeededRandom = (seed: number): (() => number) => {
+  let state = seed >>> 0;
+
+  return () => {
+    state = (1664525 * state + 1013904223) >>> 0;
+    return state / 0x100000000;
+  };
+};
+
+export const arimaSimulation = (data: TimeSeriesPoint[], horizon: number, seed: number = 42): ForecastResult => {
   // Simplified ARIMA simulation (in reality, this would be much more complex)
   const values = data.map(point => point.value);
   const n = values.length;
+  const random = createSeededRandom(seed);
   
   // Calculate differences for stationarity
   const diffs = [];
@@ -219,7 +229,7 @@ export const arimaSimulation = (data: TimeSeriesPoint[], horizon: number): Forec
     futureDate.setDate(futureDate.getDate() + i);
     
     // Simplified ARIMA forecast
-    const predictedDiff = arCoeff * lastDiff + maCoeff * (Math.random() - 0.5);
+    const predictedDiff = arCoeff * lastDiff + maCoeff * (random() - 0.5);
     lastValue += predictedDiff;
     lastDiff = predictedDiff;
     
