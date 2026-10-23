@@ -24,6 +24,12 @@ describe('detectAnomalies', () => {
     ]);
   });
 
+  it('rejects unsupported detection methods instead of returning no anomalies', () => {
+    expect(() => detectAnomalies(points([1, 2, 100]), 'median')).toThrow(
+      'Unsupported anomaly detection method: median',
+    );
+  });
+
   it('applies the selected threshold to IQR bounds', () => {
     const data = points([-11, 1, 2, 3, 4, 5, 6, 7, 8, 29]);
 
