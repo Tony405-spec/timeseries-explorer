@@ -50,10 +50,8 @@ export const detectAnomalies = (data: TimeSeriesPoint[], method: string = 'zscor
     
     data.forEach(point => {
       if (point.value < lowerBound || point.value > upperBound) {
-        const score = Math.max(
-          Math.abs(point.value - lowerBound) / iqr,
-          Math.abs(point.value - upperBound) / iqr
-        );
+        const violatedBound = point.value < lowerBound ? lowerBound : upperBound;
+        const score = Math.abs(point.value - violatedBound) / iqr;
         anomalies.push({
           timestamp: point.timestamp,
           value: point.value,
