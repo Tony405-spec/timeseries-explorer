@@ -107,3 +107,25 @@ describe('forecast horizon validation', () => {
     },
   );
 });
+
+describe('forecast minimum data validation', () => {
+  it.each([linearRegression, exponentialSmoothing, arimaSimulation])(
+    'rejects empty series in %s',
+    (forecast) => {
+      expect(() => forecast([], 1)).toThrow(/At least \d+ observations are required/);
+    },
+  );
+
+  it.each([linearRegression, arimaSimulation])(
+    'requires two observations in %s',
+    (forecast) => {
+      expect(() => forecast(points([4]), 1)).toThrow(
+        'At least 2 observations are required for this forecasting method',
+      );
+    },
+  );
+
+  it('allows exponential smoothing to use one observation', () => {
+    expect(exponentialSmoothing(points([4]), 1).data[0].value).toBe(4);
+  });
+});
