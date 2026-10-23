@@ -87,18 +87,25 @@ const DataImport: React.FC<DataImportProps> = ({ onDataImport }) => {
       h.toLowerCase() === 'open' ||
       h.toLowerCase() === 'high' ||
       h.toLowerCase() === 'low'
-    ) || headers.find(h => !isNaN(parseFloat(csvData[0][h]))); // Find any numeric column
+    ) || headers.find(h => {
+      const value = String(csvData[0][h] ?? '').trim();
+      return value !== '' && Number.isFinite(Number(value));
+    }); // Find any numeric column
     
     csvData.forEach((row, index) => {
       const dateValue = dateColumn ? row[dateColumn] : null;
       const numericValue = valueColumn ? row[valueColumn] : null;
       
-      if (dateValue && numericValue) {
+      if (
+        dateValue != null && String(dateValue).trim() !== '' &&
+        numericValue != null && String(numericValue).trim() !== ''
+      ) {
         try {
-          const timestamp = new Date(dateValue).toISOString().split('T')[0];
-          const value = parseFloat(numericValue);
+          const parsedDate = new Date(dateValue);
+          const value = Number(numericValue);
         
-          if (!isNaN(value) && !isNaN(new Date(dateValue).getTime())) {
+          if (Number.isFinite(value) && Number.isFinite(parsedDate.getTime())) {
+            const timestamp = parsedDate.toISOString().split('T')[0];
             processedData.push({ timestamp, value });
           }
         } catch (error) {
