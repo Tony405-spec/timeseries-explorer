@@ -19,8 +19,8 @@ const calculateMape = (actual: number[], predicted: number[]): number => {
 export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
   const values = data.map(point => point.value);
   const n = values.length;
-  if (n < 2) {
-    throw new Error('At least two data points are required to calculate statistics');
+  if (n === 0) {
+    throw new Error('At least one data point is required to calculate statistics');
   }
   
   const mean = values.reduce((sum, val) => sum + val, 0) / n;
@@ -29,7 +29,9 @@ export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
     ? (sortedValues[n/2 - 1] + sortedValues[n/2]) / 2 
     : sortedValues[Math.floor(n/2)];
   
-  const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (n - 1);
+  const variance = n === 1
+    ? 0
+    : values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (n - 1);
   const std = Math.sqrt(variance);
   
   const min = Math.min(...values);
