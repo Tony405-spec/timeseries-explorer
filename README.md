@@ -8,6 +8,8 @@
 
 This project demonstrates an **end-to-end time-series analysis workflow**, including data preprocessing, visualization, model building, and forecasting. The app allows users to explore temporal data and generate predictions for informed decision-making.
 
+The root `package.json` contains the primary Vite/React application published at the demo link below.
+
 Key highlights:
 
 - **Data Preprocessing:** Handles missing values, resampling, and normalization for temporal datasets.  
