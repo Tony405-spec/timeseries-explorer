@@ -1,9 +1,16 @@
 import { TimeSeriesPoint, Statistics, ForecastResult, AnomalyPoint, SeasonalDecomposition } from '../types';
 
+const validateFiniteValues = (data: TimeSeriesPoint[]): void => {
+  if (data.some(point => !Number.isFinite(point.value))) {
+    throw new Error('Time-series values must be finite numbers');
+  }
+};
+
 const validateForecastData = (data: TimeSeriesPoint[], minimumObservations: number): void => {
   if (data.length < minimumObservations) {
     throw new Error(`At least ${minimumObservations} observations are required for this forecasting method`);
   }
+  validateFiniteValues(data);
 };
 
 const validateForecastHorizon = (horizon: number): void => {
@@ -28,6 +35,7 @@ export const calculateStatistics = (data: TimeSeriesPoint[]): Statistics => {
   if (n === 0) {
     throw new Error('At least one data point is required to calculate statistics');
   }
+  validateFiniteValues(data);
   
   const mean = values.reduce((sum, val) => sum + val, 0) / n;
   const sortedValues = [...values].sort((a, b) => a - b);
@@ -63,6 +71,7 @@ export const detectAnomalies = (data: TimeSeriesPoint[], method: string = 'zscor
   if (method !== 'zscore' && method !== 'iqr') {
     throw new Error(`Unsupported anomaly detection method: ${method}`);
   }
+  validateFiniteValues(data);
 
   const values = data.map(point => point.value);
   const anomalies: AnomalyPoint[] = [];
@@ -111,6 +120,7 @@ export const performSeasonalDecomposition = (data: TimeSeriesPoint[], period: nu
   if (!Number.isInteger(period) || period < 1) {
     throw new Error('Seasonal period must be a positive integer');
   }
+  validateFiniteValues(data);
 
   const values = data.map(point => point.value);
   const n = values.length;

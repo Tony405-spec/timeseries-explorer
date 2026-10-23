@@ -15,6 +15,12 @@ const points = (values: number[]): TimeSeriesPoint[] => values.map((value, index
 }));
 
 describe('detectAnomalies', () => {
+  it('rejects non-finite observations', () => {
+    expect(() => detectAnomalies(points([1, Number.NaN, 3]))).toThrow(
+      'Time-series values must be finite numbers',
+    );
+  });
+
   it('scores low and high IQR anomalies from the violated bound', () => {
     const anomalies = detectAnomalies(points([-11, 1, 2, 3, 4, 5, 6, 7, 8, 29]), 'iqr', 2);
 
@@ -56,6 +62,12 @@ describe('detectAnomalies', () => {
 });
 
 describe('performSeasonalDecomposition', () => {
+  it('rejects non-finite observations', () => {
+    expect(() => performSeasonalDecomposition(points([1, Number.POSITIVE_INFINITY]))).toThrow(
+      'Time-series values must be finite numbers',
+    );
+  });
+
   it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])(
     'rejects invalid period %s',
     (period) => {
@@ -91,6 +103,12 @@ describe('forecast MAPE', () => {
 });
 
 describe('calculateStatistics', () => {
+  it('rejects non-finite observations', () => {
+    expect(() => calculateStatistics(points([2, Number.NEGATIVE_INFINITY]))).toThrow(
+      'Time-series values must be finite numbers',
+    );
+  });
+
   it('returns finite moments for a constant series', () => {
     expect(calculateStatistics(points([4, 4, 4]))).toEqual({
       mean: 4, median: 4, std: 0, min: 4, max: 4, skewness: 0, kurtosis: 0,
@@ -155,4 +173,15 @@ describe('forecast minimum data validation', () => {
   it('allows exponential smoothing to use one observation', () => {
     expect(exponentialSmoothing(points([4]), 1).data[0].value).toBe(4);
   });
+});
+
+describe('forecast finite input validation', () => {
+  it.each([linearRegression, exponentialSmoothing, arimaSimulation])(
+    'rejects non-finite observations in %s',
+    (forecast) => {
+      expect(() => forecast(points([2, Number.NaN]), 1)).toThrow(
+        'Time-series values must be finite numbers',
+      );
+    },
+  );
 });
