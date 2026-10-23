@@ -184,4 +184,16 @@ describe('forecast finite input validation', () => {
       );
     },
   );
+
+  it.each([linearRegression, exponentialSmoothing, arimaSimulation])(
+    'rejects invalid final timestamps in %s',
+    (forecast) => {
+      const data = points([2, 4]);
+      data[1].timestamp = 'not-a-date';
+
+      expect(() => forecast(data, 1)).toThrow(
+        'Final time-series timestamp must be a valid date',
+      );
+    },
+  );
 });

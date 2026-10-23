@@ -11,6 +11,9 @@ const validateForecastData = (data: TimeSeriesPoint[], minimumObservations: numb
     throw new Error(`At least ${minimumObservations} observations are required for this forecasting method`);
   }
   validateFiniteValues(data);
+  if (!Number.isFinite(Date.parse(data[data.length - 1].timestamp))) {
+    throw new Error('Final time-series timestamp must be a valid date');
+  }
 };
 
 const validateForecastHorizon = (horizon: number): void => {
