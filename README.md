@@ -2,7 +2,14 @@
 
 An interactive, browser-based dashboard for exploring time-series data. Upload your own CSV or JSON files, or start with built-in sample datasets, then inspect trends, forecasts, anomalies, and seasonal patterns without any backend setup.
 
-**[Live demo →](https://time-series-delta.vercel.app/)**
+**[🚀 Live demo →](https://time-series-delta.vercel.app/)** · **[📦 Pre-release v1.0.0 →](https://github.com/Tony405-spec/timeseries-explorer/releases/tag/v1.0.0)**
+
+![Time Series Explorer demo](https://github.com/Tony405-spec/timeseries-explorer/blob/main/assets/TimeseriesDemo.gif)
+
+## Live demo and release
+
+- **Try it in your browser:** [time-series-delta.vercel.app](https://time-series-delta.vercel.app/). No installation or sign-up needed.
+- **See the first release:** [v1.0.0 pre-release](https://github.com/Tony405-spec/timeseries-explorer/releases/tag/v1.0.0), which includes release notes and the GIF demo.
 
 ## Purpose
 
@@ -44,6 +51,8 @@ This repository is a learning project. I built it to help me understand time ser
 Requires Node.js 20+ and npm.
 
 ​```bash
+git clone https://github.com/Tony405-spec/timeseries-explorer.git
+cd timeseries-explorer
 npm ci
 npm run dev
 ​```
