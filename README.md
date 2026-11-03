@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/Tony405-spec/timeseries-explorer/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/Tony405-spec/timeseries-explorer/actions/workflows/frontend-ci.yml)
 [![Live demo](https://img.shields.io/badge/Live%20demo-Vercel-black?logo=vercel)](https://time-series-delta.vercel.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An interactive, browser-based dashboard I built as a learning project for understanding time-series concepts by implementing and visualizing them. It accepts CSV and JSON data, starts with synthetic sample datasets, and runs its analysis in the browser without a backend service.
 
@@ -23,6 +24,7 @@ An interactive, browser-based dashboard I built as a learning project for unders
 - [Limitations](#limitations)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
+- [License](#license)
 
 ## Purpose
 
@@ -148,7 +150,6 @@ The root `package.json` and root `src/` directory are the active application. Th
 - The ARIMA option is explicitly a seeded simulation, not a full ARIMA implementation.
 - The forecasting, anomaly detection, and decomposition methods are simplified learning implementations and are not intended for production forecasting.
 - Forecast metrics are calculated from the training data (and the ARIMA simulation uses rough metrics), so they should not be treated as rigorous out-of-sample evaluation.
-- There is no license file in the repository yet.
 
 ## Roadmap
 
@@ -160,4 +161,8 @@ The root `package.json` and root `src/` directory are the active application. Th
 
 ## Contributing
 
-For small changes, create a branch, keep the change focused, and run `npm run lint`, `npm run test`, and `npm run build` before opening a pull request. Please keep documentation aligned with the actual implementation and preserve the project's learning-focused scope.
+For small changes, create a branch, keep the change focused, and run `npm run lint`, `npm run test`, and `npm run build` before opening a pull request. Please keep documentation aligned with the actual implementation and preserve the project's learning-focused scope. Contributors are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## License
+
+This project is released under the [MIT License](LICENSE).
